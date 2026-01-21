@@ -11,7 +11,7 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 - [Disassembling and Decompiling a Dreamcast game in Ghidra](#-disassembling-and-decompiling-a-dreamcast-game-in-ghidra)
 - [Flycast as a GDB Server](#-flycast-as-a-gdb-server)
 - [Debugging with a Console GDB Client](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
-- [Debugging with Ghidra](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
+- [Debugging with Ghidra](#-debugging-a-dreamcast-game-with-ghidra)
 - [Reverse Engineering Examples](#-reverse-engineering-examples)
 - [Related Projects](#-related-projects)
 - [Contributing](#-contributing)
