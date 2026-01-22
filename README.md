@@ -5,17 +5,18 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 ---
 
 ## 📑 Table of Contents
-- [TL;DR](#-tldr)
-- [General Tools](#%EF%B8%8F-general-tools)
-- [Dreamcast Resources](#-dreamcast-resources)
-- [Disassembling and Decompiling a Dreamcast game in Ghidra](#-disassembling-and-decompiling-a-dreamcast-game-in-ghidra)
-- [Flycast as a GDB Server](#-flycast-as-a-gdb-server)
-- [Debugging with a Console GDB Client](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
-- [Debugging with Ghidra](#-debugging-a-dreamcast-game-with-ghidra)
-- [Reverse Engineering Examples](#-reverse-engineering-examples)
-- [Related Projects](#-related-projects)
-- [Contributing](#-contributing)
-- [Disclaimer](#%EF%B8%8F-disclaimer)
+- [⚡ TL;DR](#-tldr)
+- [🛠️ General Tools](#%EF%B8%8F-general-tools)
+- [📚 Dreamcast Resources](#-dreamcast-resources)
+- [🐉 Disassembling and Decompiling a Dreamcast game in Ghidra](#-disassembling-and-decompiling-a-dreamcast-game-in-ghidra)
+- [🧬 Ghidra Function Identification Databases](#-ghidra-function-identification-databases)
+- [🐞 Flycast as a GDB Server](#-flycast-as-a-gdb-server)
+- [⌨️ Debugging with a Console GDB Client](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
+- [🐲 Debugging with Ghidra](#-debugging-a-dreamcast-game-with-ghidra)
+- [🔍 Reverse Engineering Examples](#-reverse-engineering-examples)
+- [🧪 Related Projects](#-related-projects)
+- [🤝 Contributing](#-contributing)
+- [⚖️ Disclaimer](#%EF%B8%8F-disclaimer)
 
 ---
 
@@ -38,8 +39,8 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 ---
 
 ## 📚 Dreamcast Resources
-- **[dreamcast-docs](https://github.com/Kochise/dreamcast-docs/)** - hardware docs & bare-metal coding
-- **Sega Dreamcast Katana SDKs**: the official SDKs are available on the Internet, somewhere. Search for "Dreamcast Katana SDK R9", "R10" and "R11".
+- **[dreamcast-docs](https://github.com/Kochise/dreamcast-docs/)** - hardware docs & bare-metal coding.
+- **Sega Dreamcast Katana SDKs**: the official SDKs are available on the Internet, somewhere. Search engines and forums should help you find them.
 - **[gditools3](https://github.com/AltoRetrato/gditools3)**: A Python program/library to handle Dreamcast GD-ROM image files. (I might update it or rewrite it from scratch someday.)
 - **[SiZiOUS - Sega Dreamcast Downloads](https://sizious.com/download/dreamcast/)**: many awesome tools, some with source code.
 - **[ROMhacking Utilities](https://www.romhacking.net/?page=utilities&platform=14&perpage=20)**: a few more tools. _PVR Viewer_ and _GD-Rom Explorer_ are essentials!
@@ -79,7 +80,13 @@ Create a new Ghidra project and import the binaries. Use these settings:
 
 Run auto analysis, then run the `dc-re-ghidra` script.
 
-(On FID DBs... WIP)
+### 🧬 Ghidra Function Identification Databases
+
+Ghidra can create and use Function Identification Databases (FID DBs) to automatically name functions in binaries. Basically, they are the equivalent of FLIRT (Fast Library Identification and Recognition Technology) in IDA Pro.
+
+We can create FID DBs from Sega SDKs manually, but Ghidra's `support\analyzeHeadless` and a few Java scripts can automate the process. One of those scripts is `CreateMultipleLibraries.java`, which requires a specific folder tree structure in order to import the SDK files with the right properties, meaning there is still some manual labor involved. The alternatives are to just use the `dc-re-ghidra` function identification feature (which works, but is somewhat limited), or use the Python script below to do most of the work. I'm still testing it with SDKs R09, R10, and R11.
+
+(...)
 
 [↑ Back to TOC](#-table-of-contents)
 
@@ -150,7 +157,7 @@ You should see the message `Remote debugging using 127.0.0.1:3263`. Now you can 
 ## 🐲 Debugging a Dreamcast game with Ghidra
 
 This is not a Ghidra tutorial, but see the Reverse Engineering Examples section below if you need some help. That being sad, to debug a Dreamcast game running on Flycast using Ghidra as a GDB client:
-- Launch the game from Flycast
+- Launch the game from Flycast (built with GDB support)
 - Open your imported SH4 binary (e.g., `1ST_READ.BIN`) in Ghidra's Debugger tool
 - Click the bug icon: 🐞🔻 `Configure and Launch 1ST_READ.BIN with..>` ➔ `gdb remote` 
 	- `Image`: (don't change)
