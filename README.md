@@ -9,7 +9,7 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 - [🛠️ General Tools](#%EF%B8%8F-general-tools)
 - [📚 Dreamcast Resources](#-dreamcast-resources)
 - [🐉 Disassembling and Decompiling a Dreamcast game in Ghidra](#-disassembling-and-decompiling-a-dreamcast-game-in-ghidra)
-    - [🧬 Ghidra Function Identification Databases](#-ghidra-function-identification-databases)
+    - [🧬 Ghidra Function Identification Databases (FIDB)](#-ghidra-function-identification-databases)
 - [🐞 Flycast as a GDB Server](#-flycast-as-a-gdb-server)
 - [⌨️ Debugging with a Console GDB Client](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
 - [🐲 Debugging with Ghidra](#-debugging-a-dreamcast-game-with-ghidra)
@@ -30,7 +30,8 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 ---
 
 ## 🛠️ General Tools
-- **Notes**: Take lots of them. [Obsidian](https://obsidian.md/) is my recommendation, but even plain text files will do.
+These tools and practices are not specific nor required for reverse engineering, but highly recommended.
+- **Notes**: Take lots of them. [Obsidian](https://obsidian.md/) is my favorite note taking app, using Markdown, but even plain text files will do.
 - **AI assistant**: [NotebookLM](https://notebooklm.google.com/) is great for finding that section of that document you need.
 - **Hex editor**: [ImHex](https://github.com/WerWolv/ImHex).
 
@@ -84,9 +85,18 @@ Run auto analysis, then run the `dc-re-ghidra` script.
 
 Ghidra can create and use Function Identification Databases (FID DBs) to automatically name functions in binaries. Basically, they are the equivalent of FLIRT (Fast Library Identification and Recognition Technology) in IDA Pro.
 
-We can create FID DBs from Sega SDKs manually, but Ghidra's `support\analyzeHeadless` and a few Java scripts can automate the process. One of those scripts is `CreateMultipleLibraries.java`, which requires a specific folder tree structure in order to import the SDK files with the right properties, meaning there is still some manual labor involved. The alternatives are to just use the `dc-re-ghidra` function identification feature (which works, but is somewhat limited), or use the Python script below to do most of the work. I'm still testing it with SDKs R09, R10, and R11.
+We can create FID DBs from Sega SDKs manually, but Ghidra's `support\analyzeHeadless` and a few Java scripts can help automate the process. The `CreateMultipleLibraries.java` script requires putting the SDK files in a specific folder tree structure, meaning there is still some manual labor involved. The alternatives are to just use the `dc-re-ghidra` function identification feature (which works, but is somewhat limited), or use the Python script below to do most of the work. I tested it (barely) with SDKs R09, R10, and R11, and it probably would need changes to work with other SDK versions. Edit the paths to your SDKs and the tools in the script before running. When processing a single SDK, it took about 1h and 18 GB of disk space on my PC. YMMV.
 
 (...)
+
+Add your custom FID DB by opening a binary in Ghidra's CodeBrowser, then going to `Tools` → `Function ID` → `Attach Existing FidDb...`, then selecting a file (e.g., `dc_sdk_r09.fidb`).
+
+You can enable and disable FID DBs via `Tools` → `Function ID` → `Choose active FidDbs`.
+
+To apply your enabled FID DBs, in the `Analysis` menu you can:
+- run `Auto Analyse` or `Analyze All Open...`, then ensure `Function ID` is enabled in the `Analyzers` window group.
+- select `One Shot` → `Function ID`.
+
 
 [↑ Back to TOC](#-table-of-contents)
 
@@ -180,7 +190,7 @@ This is not a Ghidra tutorial, but see the Reverse Engineering Examples section 
 
 ## 🔍 Reverse Engineering Examples
 
-- Dream Para! Para! (link coming soon...)
+- Perhaps one or more links might appear in this section...
 
 [↑ Back to TOC](#-table-of-contents)
 
