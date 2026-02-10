@@ -5,33 +5,33 @@ Tools, resources, and notes for reverse-engineering Sega Dreamcast games.
 ---
 
 ## 📑 Table of Contents
-- [⚡ TL;DR](#-tldr)
-- [🛠️ General Tools](#%EF%B8%8F-general-tools)
-- [📚 Dreamcast Resources](#-dreamcast-resources)
-- [🐉 Disassembling and Decompiling a Dreamcast game in Ghidra](#-disassembling-and-decompiling-a-dreamcast-game-in-ghidra)
-    - [🧬 Ghidra Function Identification Databases (FIDB)](#-ghidra-function-identification-databases)
-- [🐞 Flycast as a GDB Server](#-flycast-as-a-gdb-server)
-- [⌨️ Debugging with a Console GDB Client](#%EF%B8%8F-debugging-a-dreamcast-game-with-a-gdb-client-from-the-console)
-- [🐲 Debugging with Ghidra](#-debugging-a-dreamcast-game-with-ghidra)
-- [🔍 Reverse Engineering Examples](#-reverse-engineering-examples)
-- [🧪 Related Projects](#-related-projects)
-- [🤝 Contributing](#-contributing)
-- [⚖️ Disclaimer](#%EF%B8%8F-disclaimer)
+- [⚡ TL;DR](#tldr)
+- [🛠️ General Tools](#general-tools)
+- [📚 Dreamcast Resources](#dreamcast-resources)
+- [🐉 Disassembling and Decompiling a Dreamcast game in Ghidra](#ghidra)
+    - [🧬 Ghidra Function Identification Databases (FIDB)](#ghidra-fidb)
+- [🐞 Flycast as a GDB Server](#flycast-as-a-gdb-server)
+- [⌨️ Debugging with a Console GDB Client](#gdb-console-client)
+- [🐲 Debugging with Ghidra](#debugging-a-dreamcast-game-with-ghidra)
+- [🔍 Reverse Engineering Examples](#reverse-engineering-examples)
+- [🧪 Related Projects](#related)
+- [🤝 Contributing](#contributing)
+- [⚖️ Disclaimer](#disclaimer)
 
 ---
 
-## ⚡ TL;DR
-- Extract data with **GD-ROM Explorer**
-- Disassemble/decompile with **Ghidra** (+ scripts or FID DBs)
-- Debug using **Flycast (GDB server)** + **Ghidra**
+## ⚡ TL;DR <a name="#tldr"></a>
+- Extract data from disk images with **GD-ROM Explorer**
+- Disassemble/decompile Dreamcast binaries with **Ghidra** (+ scripts or FID DBs)
+- Debug interactively using **Flycast (GDB server)** + **Ghidra**
 
 [↑ Back to TOC](#-table-of-contents)
 
 ---
 
-## 🛠️ General Tools
-These tools and practices are not specific nor required for reverse engineering, but highly recommended.
-- **Notes**: Take lots of them. [Obsidian](https://obsidian.md/) is my favorite note taking app, using Markdown, but even plain text files will do.
+## 🛠️ General Tools  <a name="#general-tools"></a>
+These tools and practices are neither specific to nor required for reverse engineering, but highly recommended.
+- **Notes**: Take lots of them. [Obsidian](https://obsidian.md/) is my favorite note-taking app, using Markdown, but even plain text files will do.
 - **AI assistant**: [NotebookLM](https://notebooklm.google.com/) is great for finding that section of that document you need.
 - **Hex editor**: [ImHex](https://github.com/WerWolv/ImHex).
 
@@ -39,7 +39,7 @@ These tools and practices are not specific nor required for reverse engineering,
 
 ---
 
-## 📚 Dreamcast Resources
+## 📚 Dreamcast Resources <a name="#dreamcast-resources"></a>
 - **[dreamcast-docs](https://github.com/Kochise/dreamcast-docs/)** - hardware docs & bare-metal coding.
 - **Sega Dreamcast Katana SDKs**: the official SDKs are available on the Internet, somewhere. Search engines and forums should help you find them.
 - **[gditools3](https://github.com/AltoRetrato/gditools3)**: A Python program/library to handle Dreamcast GD-ROM image files. (I might update it or rewrite it from scratch someday.)
@@ -50,9 +50,9 @@ These tools and practices are not specific nor required for reverse engineering,
 
 ---
 
-## 🐉 Disassembling and Decompiling a Dreamcast game in Ghidra
+## 🐉 Disassembling and Decompiling a Dreamcast game in Ghidra <a name="#ghidra"></a>
 
-**[Ghidra](https://github.com/NationalSecurityAgency/ghidra)** is a software reverse engineering (SRE) framework, by NSA.
+**[Ghidra](https://github.com/NationalSecurityAgency/ghidra)** is a software reverse engineering (SRE) framework, by the NSA.
 
 <details>
 
@@ -66,7 +66,7 @@ These tools and practices are not specific nor required for reverse engineering,
 
 </details>
 
-If you are not used with Ghidra, I recommend checking the `/docs/CheatSheet.html` file with keyboard shortcuts and more.
+If you are not used to Ghidra, I recommend checking the `/docs/CheatSheet.html` file with keyboard shortcuts and more.
 
 Some Ghidra tools I found for Dreamcast RE:
 - [ghidra_sdc_ldr](https://github.com/kapdap/ghidra_sdc_ldr) (extension) - Sega Dreamcast loader for GHIDRA. Did work for me on some binaries, didn't work on others. As an extension, it needs to be compiled for your exact Ghidra version. I'm not sure it is worth the trouble, so I think you can skip this one.
@@ -77,32 +77,32 @@ Get your Dreamcast binaries (e.g., `1ST_READ.BIN`). Use GD-ROM Explorer if you n
 Create a new Ghidra project and import the binaries. Use these settings:
 - Format: `Raw Binary` 
 - Language: Processor: `SuperH4`, Variant: `default`, Size: `32`, Endian: `little`, Compiler: `default` 
-- Options → Base Address: `0x8c010000` (or `0x8c000000` for `IP.BIN`)
+- Options ➔ Base Address: `0x8c010000` (or `0x8c000000` for `IP.BIN`)
 
 Run auto analysis, then run the `dc-re-ghidra` script.
 
-### 🧬 Ghidra Function Identification Databases
+### 🧬 Ghidra Function Identification Databases <a name="#ghidra-fidb"></a>
 
 Ghidra can create and use Function Identification Databases (FID DBs) to automatically name functions in binaries. Basically, they are the equivalent of FLIRT (Fast Library Identification and Recognition Technology) in IDA Pro.
 
 We can create FID DBs from Sega SDKs manually, but Ghidra's `support\analyzeHeadless` and a few Java scripts can help automate the process. The `CreateMultipleLibraries.java` script requires putting the SDK files in a specific folder tree structure, meaning there is still some manual labor involved. The alternatives are to just use the `dc-re-ghidra` function identification feature (which works, but is somewhat limited), or use the Python script below to do most of the work. I tested it (barely) with SDKs R09, R10, and R11, and it probably would need changes to work with other SDK versions. Edit the paths to your SDKs and the tools in the script before running. When processing a single SDK, it took about 1h and 18 GB of disk space on my PC. YMMV.
 
-(...)
+Download, edit and run [**build_dc_fidb.py**](build_dc_fidb.py)
 
-Add your custom FID DB by opening a binary in Ghidra's CodeBrowser, then going to `Tools` → `Function ID` → `Attach Existing FidDb...`, then selecting a file (e.g., `dc_sdk_r09.fidb`).
+Add your custom FID DB by opening a binary in Ghidra's CodeBrowser, then going to `Tools` ➔ `Function ID` ➔ `Attach Existing FidDb...`, then selecting a file (e.g., `dc_sdk_r09.fidb`).
 
-You can enable and disable FID DBs via `Tools` → `Function ID` → `Choose active FidDbs`.
+You can enable and disable FID DBs via `Tools` ➔ `Function ID` ➔ `Choose active FidDbs`.
 
 To apply your enabled FID DBs, in the `Analysis` menu you can:
-- run `Auto Analyse` or `Analyze All Open...`, then ensure `Function ID` is enabled in the `Analyzers` window group.
-- select `One Shot` → `Function ID`.
+- run `Auto Analyze` or `Analyze All Open...`, then ensure `Function ID` is enabled in the `Analyzers` window group.
+- select `One Shot` ➔ `Function ID`.
 
 
 [↑ Back to TOC](#-table-of-contents)
 
 ---
 
-## 🐞 Flycast as a GDB Server
+## 🐞 Flycast as a GDB Server <a name="#flycast-as-a-gdb-server"></a>
 
 **[Flycast](https://github.com/flyinghead/flycast)** is a multiplatform Sega Dreamcast, Naomi, Naomi 2 and Atomiswave emulator.
 
@@ -133,9 +133,9 @@ The Flycast executable will be in `C:\flycast\flycast\artifact\bin\flycast.exe` 
 - Go to `Settings` ➔ `Advanced` ➔ `Debugging` 
 - Check `Enable GDB` and `Wait for connection`
 - Click `Done`
-- Restart Flycast for those optios to take effect
+- Restart Flycast for those options to take effect
 
-Finally, I recommend you to put the Dreamcast BIOS file in the `data` folder (`C:\flycast\flycast\artifact\bin\data`). Many games can run fine without it, but some won't.
+Finally, I recommend putting the Dreamcast BIOS file in the `data` folder (`C:\flycast\flycast\artifact\bin\data`). Many games can run fine without it, but some won't.
 
 Please note that, as of this writing, I believe the GDB server implementation in Flycast is incomplete and/or buggy: some commands don't seem to work (e.g., `u` / `until`), and even though the debugging sessions I started were stable for quite a while, I had to restart them a couple of times.
 
@@ -145,9 +145,9 @@ Please note that, as of this writing, I believe the GDB server implementation in
 
 ---
 
-## ⌨️ Debugging a Dreamcast game with a GDB client from the console
+## ⌨️ Debugging a Dreamcast game with a GDB client from the console <a name="#gdb-console-client"></a>
 
-A Flycast acting as a GDB server needs a GDB client. Ghidra has one, but you can use a simple terminal client as well. The client needs to supports SH4, like `gdb-multiarch`. You can install it on MSYS2 with:
+A Flycast acting as a GDB server needs a GDB client. Ghidra has one, but you can use a simple terminal client as well. The client needs to support SH4, like `gdb-multiarch`. You can install it on MSYS2 with:
 - `pacman -S mingw-w64-x86_64-gdb-multiarch`
 
 To test your setup:
@@ -164,9 +164,9 @@ You should see the message `Remote debugging using 127.0.0.1:3263`. Now you can 
 
 ---
 
-## 🐲 Debugging a Dreamcast game with Ghidra
+## 🐲 Debugging a Dreamcast game with Ghidra <a name="#debugging-a-dreamcast-game-with-ghidra"></a>
 
-This is not a Ghidra tutorial, but see the Reverse Engineering Examples section below if you need some help. That being sad, to debug a Dreamcast game running on Flycast using Ghidra as a GDB client:
+This is not a Ghidra tutorial, but see the Reverse Engineering Examples section below if you need some help. That being said, to debug a Dreamcast game running on Flycast using Ghidra as a GDB client:
 - Launch the game from Flycast (built with GDB support)
 - Open your imported SH4 binary (e.g., `1ST_READ.BIN`) in Ghidra's Debugger tool
 - Click the bug icon: 🐞🔻 `Configure and Launch 1ST_READ.BIN with..>` ➔ `gdb remote` 
@@ -188,7 +188,7 @@ This is not a Ghidra tutorial, but see the Reverse Engineering Examples section 
 
 ---
 
-## 🔍 Reverse Engineering Examples
+## 🔍 Reverse Engineering Examples <a name="#reverse-engineering-examples"></a>
 
 - Perhaps one or more links might appear in this section...
 
@@ -196,7 +196,7 @@ This is not a Ghidra tutorial, but see the Reverse Engineering Examples section 
 
 ---
 
-## 🧪 Related Projects
+## 🧪 Related Projects <a name="#related"></a>
 
 - [samba-de-amigo-2k_modding](https://github.com/AltoRetrato/samba-de-amigo-2k_modding): Tools and information to help you mod "Samba de Amigo Ver. 2000" for the Dreamcast, with English translations and custom songs.
 - [Oneiric Quest](https://github.com/AltoRetrato/Oneiric-Quest): a Dreamcast emulator in VR that lets you play Samba de Amigo with virtual maracas!
@@ -205,14 +205,14 @@ This is not a Ghidra tutorial, but see the Reverse Engineering Examples section 
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing <a name="#contributing"></a>
 Issues, corrections, PRs, suggestions and links are welcome.
 
 [↑ Back to TOC](#-table-of-contents)
 
 ---
 
-## ⚖️ Disclaimer
+## ⚖️ Disclaimer <a name="#disclaimer"></a>
 
 This repository is for **educational and research purposes only**.
 
