@@ -4,7 +4,9 @@
 # =================
 #
 # 2026.02.08  1st version
-
+#
+# From https://github.com/AltoRetrato/Dreamcast-Disassembly-Debugging-and-Decompilation-Diaries
+#
 # This script builds Function ID databases (FIDB) from Dreamcast SDKs.
 # Tested with SDK r09, r10, and r11, and Ghidra 12.0 on Windows 11.
 # Change the configuration and "__main__" sections as needed.
@@ -363,10 +365,11 @@ def build_fidb(fidb_name: str, sdk_root: str | Path):
 # ---------------------------------------------------------------------
 
 if __name__ == "__main__":
-    os.chdir(r"E:\Games\Dreamcast\Samba2K_hack\sdk"); # Set your SDK root here for testing
+    # os.chdir(r"E:\Games\Dreamcast\Samba2K_hack\sdk"); # Set your SDK root here for testing
+  
     # sdk_root is relative from where you invoke this script, 
     # i.e., run it from the parent folder containing the SDKs in subfolders,
     # or set it to an absolute path.
-    #build_fidb(fidb_name="dc_sdk_r09", sdk_root="r09")
+    build_fidb(fidb_name="dc_sdk_r09", sdk_root="r09")
     #build_fidb(fidb_name="dc_sdk_r10", sdk_root="r10")
-    build_fidb(fidb_name="dc_sdk_r11", sdk_root="r11")
+    #build_fidb(fidb_name="dc_sdk_r11", sdk_root="r11")
